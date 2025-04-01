@@ -1,0 +1,79 @@
+#!/bin/bash
+PSQL="psql -X --username=freecodecamp --dbname=salon --tuples-only -c"
+echo -e "\n~~~~~ My Salon ~~~~~\n"
+
+MAIN_MENU(){
+  if [[ $1 ]]
+  then
+    echo -e "\n$1"
+  fi
+
+  say "Welcome to My Salon how can I help you?"
+  echo -e "\n\n1) cut\n2) color\n3) perm\n4) Exit"
+  read MAIN_MENU_SELECTION
+  case $MAIN_MENU_SELECTION in
+    1) CUT_MENU ;;
+    2) COLOR_MENU ;;
+    3) PERM ;;
+    4) EXIT ;;
+    *) MAIN_MENU "I could not find that service. What would you like today?";;
+  esac
+}
+CUT_MENU(){
+  SERVICE_ID_SELECTED=1
+  SERVICE=$($PSQL "select name from services where service_id='$SERVICE_ID_SELECTED'")
+  SCHEDULE
+  MAIN_MENU
+}
+COLOR_MENU(){
+  SERVICE_ID_SELECTED=2
+  SERVICE=$($PSQL "select name from services where service_id='$SERVICE_ID_SELECTED'")
+  SCHEDULE
+  MAIN_MENU
+}
+PERM_MENU(){
+  SERVICE_ID_SELECTED=3
+  SERVICE=$($PSQL "select name from services where service_id='$SERVICE_ID_SELECTED'")
+  SCHEDULE
+  MAIN_MENU
+}
+
+SCHEDULE(){
+  prompt "What's your phone number?"
+  read CUSTOMER_PHONE
+  CUSTOMER_ID=$($PSQL "select customer_id from customers where phone='$PHONE_NUMBER'")
+
+  if [[ -z $CUSTOMER_ID ]]
+  then
+    prompt "I don't have a record for that phone number, what's your name?"
+    read CUSTOMER_NAME
+    CUSTOMER_ID=$($PSQL "select customer_id from customers where name='$CUSTOMER_NAME'")
+  fi
+
+  prompt "What time would you like your$SERVICE, $CUSTOMER_NAME?"
+  read SERVICE_TIME
+
+  CUSTOMER_ID=$($PSQL "select customer_id from customers where name='$CUSTOMER_NAME'")
+  RESULT=$($PSQL "insert into appointments(customer_id, service_id, time) values('$CUSTOMER_ID', $SERVICE_ID_SELECTED, '$SERVICE_TIME')")
+
+  MAIN_MENU "I have put you down for a$SERVICE at $SERVICE_TIME, $CUSTOMER_NAME."
+}
+
+say(){
+    if [[ $1 ]]
+  then
+    echo -e "\n$1"
+  fi
+}
+prompt(){
+    if [[ $1 ]]
+  then
+    echo -e "\n$1\n"
+  fi
+}
+
+EXIT(){
+  echo -e "\nThank you for stopping in.\n"
+}
+
+MAIN_MENU
