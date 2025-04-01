@@ -1,0 +1,47 @@
+#!/bin/bash
+PSQL="psql -X --username=freecodecamp --dbname=salon --tuples-only -c"
+
+echo -e "\n~~~~~ My Salon ~~~~~\n"
+
+MAIN_MENU(){
+  if [[ $1 ]]
+  then
+    echo -e "\n$1"
+  fi
+
+  echo "Welcome to My Salon how can I help you?"
+  echo -e "\n\n1. cut\n2. color\n3. Perm\n4. Exit"
+  read MAIN_MENU_SELECTION
+  case $MAIN_MENU_SELECTION in
+    1) CUT_MENU ;;
+    2) COLOR_MENU ;;
+    3) PERM ;;
+    4) EXIT ;;
+    *) MAIN_MENU ;;
+  esac
+}
+CUT_MENU(){
+    SAY "You made the cut menu"
+
+}
+COLOR_MENU(){
+    echo -e "\n You made the PERM menu"
+
+}
+PERM_MENU(){
+    echo -e "\n You made the cut menu"
+
+}
+
+EXIT(){
+  echo -e "\nThank you for stopping in.\n"
+}
+
+SAY(){
+    if [[ $1 ]]
+  then
+    echo -e "\n\n$1\n"
+  fi
+}
+
+MAIN_MENU
