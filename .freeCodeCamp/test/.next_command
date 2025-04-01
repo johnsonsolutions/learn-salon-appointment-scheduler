@@ -131,3 +131,7 @@ chmod +x salon.sh
 ./salon.sh
 clear
 ./salon.sh
+__vsc_prompt_cmd_original
+CUSTOMER_PHONE
+psql -U postgres < salon.sql
+pg_dump -cC --inserts -U freecodecamp salon > salon.sql
