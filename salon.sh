@@ -10,9 +10,16 @@ MAIN_MENU(){
   fi
 
   echo -e "\nWelcome to My Salon, how can I help you?"
-  echo -e "\n1) cut\n2) color\n3) perm\n4) Exit"
-  read MAIN_MENU_SELECTION
-  case $MAIN_MENU_SELECTION in
+  SERVICE_LIST=$($PSQL "select * from services")
+  echo "$SERVICE_LIST" | while read SERVICE_ID BAR NAME
+  do
+    SID=$(echo $SERVICE_ID | sed 's/ //g')
+    SNAME=$(echo $NAME | sed 's/ //g')
+    echo "$SID) $SNAME"
+  done
+
+  read SERVICE_ID_SELECTED
+  case $SERVICE_ID_SELECTED in
     1) ACTIVITY 1 ;;
     2) ACTIVITY 2 ;;
     3) ACTIVITY 3 ;;
@@ -23,7 +30,6 @@ MAIN_MENU(){
 
 ACTIVITY()
 {
-  SERVICE_ID_SELECTED=$1
   echo -e "\nWhat's your phone number?"
   read CUSTOMER_PHONE
   CUSTOMER_ID=$($PSQL "select customer_id from customers where phone='$PHONE_NUMBER'")
@@ -38,7 +44,7 @@ ACTIVITY()
   fi
 
   SERVICE=$($PSQL "select name from services where service_id='$SERVICE_ID_SELECTED'")
-  echo -e "\nWhat time would you like your$SERVICE, $CUSTOMER_NAME?"
+  echo -e "\nWhat time would you like your$SERVICE,$CUSTOMER_NAME?"
   read SERVICE_TIME
   TIME_RESULT=$($PSQL "insert into appointments(customer_id, service_id, time) values('$CUSTOMER_ID', $SERVICE_ID_SELECTED, '$SERVICE_TIME')")
   
